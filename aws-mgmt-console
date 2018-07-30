@@ -1,0 +1,45 @@
+
+1. AWS CLI 
+2. SSH to Linux Servers
+
+STEP-1 : Gitbash
+
+https://git-scm.com/downloads
+
+STEP-2 : Cmder
+
+https://github.com/cmderdev/cmder/releases/download/v1.3.6/cmder.zip
+
+
+IAM : Jessi 
+
+Group : devteam 
+
+AWS Mgmt Console:
+
+UserName : jessi
+PassWord : 
+
+https://cloudcicd.signin.aws.amazon.com/console
+
+AWS CLI:
+
+Access key ID :  AKIAINCP3SZLO2A7BXZQ
+Secret access key : 
+
+1. AWS CLI Softwares :
+
+1. Gitbash & 2. Cmder
+
+3. python 3.6.0
+
+32-Bit:
+https://www.python.org/ftp/python/3.6.0/python-3.6.0-webinstall.exe
+
+64-Bit:
+https://www.python.org/ftp/python/3.6.0/python-3.6.0-amd64-webinstall.exe
+
+4. pip 10
+
+5. aws-cli
+
