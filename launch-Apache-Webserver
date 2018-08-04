@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Updating the Repository
+yum update -y
+
+# Download, Install, & Configure Apache Webserver
+yum install http* --skip-broken -y
+
+# Start the Apache Webserver Service
+service httpd start
+
+# Enable the Apache Webserver Service at boot
+chkconfig httpd on
+
+# Create a index.html file part of DocumentRoot & update some text
+echo "Welcome to AWS World" > /var/www/html/index.html
