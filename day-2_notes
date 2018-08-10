@@ -1,0 +1,38 @@
+
+Project : www.cloudcicd.org
+
+Cloud Account : AWS
+
+Team : 
+
+1. developers : jakes
+2. qa
+3. production
+4. architects
+5. business
+
+Root Account : onlineucator@gmail.com
+
+https://aws.amazon.com/console
+
+Company Users will login cloudcicd.org aws cloud:
+
+https://126211257110.signin.aws.amazon.com/console
+
+AWS Console:
+https://cloudcicd.signin.aws.amazon.com/console
+
+AWS CLI :
+
+SSH TOOL: 1. gitbash
+		  2. cmder
+		  3. terminal
+
+Pre: 
+1. python 3.6.0
+2. pip9 to pip10
+3. pip install aws-cli 
+
+aws cli >> to >> AWS 
+
+email : keshav.kummari@gmail.com
