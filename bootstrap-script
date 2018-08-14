@@ -1,0 +1,18 @@
+Launch a Static Website :
+
+While launching a EC2 instance part of AWS VPC(default)
+
+EC2 - Linux (AMZ)
+
+EC2(Virtualbox) --- 1. Webserver : Apache httpd
+					2. Code      : Html
+					3. Deploy	 : /var/www/html/
+					4. File Name : index.html
+					5. Service   : httpd
+					6. Enable Service : httpd
+#!/bin/bash
+yum update -y
+yum install http* --skip-broken -y
+service httpd start
+chkconfig httpd on 
+echo "<html><head><title>AWS</title></head><body bgcolor="olive"><h1>Welcome to AWS World By Keshav Kummari</h1></body></html>" > /var/www/html/index.html
