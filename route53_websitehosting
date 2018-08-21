@@ -1,0 +1,29 @@
+
+
+Website Launch : 
+
+1. Domain Name Purchased : aws, google, godaddy etc....
+
+2. Hosting Space : AWS, Google, Godaddy etc....
+
+Case Study : 
+
+Domain Name   : www.onlineucator.com
+
+Hosting Space : AWS 
+
+AWS - Route53(DNS)
+
+Step-1 : Login to Godaddy site : https://www.godaddy.com/
+
+Domain names >> onlineucator >> Edit the Name Servers 
+
+Step-2 : Go to AWS MGMT Console >> Launch a EC2 instance using bootstrap Script
+
+Step-3 : AWS Route53 >> Hosted Zones : 1. SOA & 2. NS 
+
+Step-4 : Copy the Name Servers and Go to Godaddy and add this name servers & save.
+
+Step-5 : Go to AWS Route53 >> Create  A record and map that with EC2 instance Ipaddress
+
+Step-6 : Go to the browser and Verify the Domain Name
