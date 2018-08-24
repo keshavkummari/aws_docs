@@ -1,1 +1,221 @@
 https://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/vpc-subnets-commands-example.html
+
+
+
+To Create a VPC:
+
+# aws ec2 create-vpc --cidr-block 10.0.0.0/16
+
+{
+    "Vpc": {
+        "CidrBlock": "10.0.0.0/16",
+        "DhcpOptionsId": "dopt-a43781dc",
+        "State": "pending",
+        "VpcId": "vpc-036813beb28be0710",
+        "InstanceTenancy": "default",
+        "Ipv6CidrBlockAssociationSet": [],
+        "CidrBlockAssociationSet": [
+            {
+                "AssociationId": "vpc-cidr-assoc-03709fafac77fbe88",
+                "CidrBlock": "10.0.0.0/16",
+                "CidrBlockState": {
+                    "State": "associated"
+                }
+            }
+        ],
+        "IsDefault": false,
+        "Tags": []
+    }
+}
+$
+
+
+To Create Internet Gateway:
+
+# aws ec2 create-internet-gateway
+
+{
+    "InternetGateway": {
+        "Attachments": [],
+        "InternetGatewayId": "igw-084a3b4b5a4113dd4",
+        "Tags": []
+    }
+}
+
+# aws ec2 attach-internet-gateway --vpc-id "vpc-036813beb28be0710" --internet-gateway-id "igw-084a3b4b5a4113dd4" --region us-east-1
+
+
+# aws ec2 create-subnet --vpc-id vpc-036813beb28be0710 --cidr-block 10.0.1.0/24
+
+{
+    "Subnet": {
+        "AvailabilityZone": "us-east-1a",
+        "AvailableIpAddressCount": 251,
+        "CidrBlock": "10.0.1.0/24",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false,
+        "State": "pending",
+        "SubnetId": "subnet-0ade9f8d7d4c6f62e",
+        "VpcId": "vpc-036813beb28be0710",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": []
+    }
+}
+
+
+# aws ec2 create-subnet --vpc-id vpc-036813beb28be0710 --cidr-block 10.0.2.0/24 --availability-zone "us-east-1b"
+
+{
+    "Subnet": {
+        "AvailabilityZone": "us-east-1b",
+        "AvailableIpAddressCount": 251,
+        "CidrBlock": "10.0.2.0/24",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false,
+        "State": "pending",
+        "SubnetId": "subnet-035c5ce122305657d",
+        "VpcId": "vpc-036813beb28be0710",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": []
+    }
+}
+
+
+# aws ec2 create-subnet --vpc-id vpc-036813beb28be0710 --cidr-block 10.0.3.0/24 --availability-zone "us-east-1a"
+
+{
+    "Subnet": {
+        "AvailabilityZone": "us-east-1a",
+        "AvailableIpAddressCount": 251,
+        "CidrBlock": "10.0.3.0/24",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false,
+        "State": "pending",
+        "SubnetId": "subnet-04346daa909540389",
+        "VpcId": "vpc-036813beb28be0710",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": []
+    }
+}
+
+
+# aws ec2 create-subnet --vpc-id vpc-036813beb28be0710 --cidr-block 10.0.4.0/24 --availability-zone "us-east-1b"
+
+{
+    "Subnet": {
+        "AvailabilityZone": "us-east-1b",
+        "AvailableIpAddressCount": 251,
+        "CidrBlock": "10.0.4.0/24",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false,
+        "State": "pending",
+        "SubnetId": "subnet-0cb2a499bfd075c70",
+        "VpcId": "vpc-036813beb28be0710",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": []
+    }
+}
+
+
+Create a custom route table for your VPC.
+
+# RouteTable-1 [Public]
+
+# aws ec2 create-route-table --vpc-id vpc-036813beb28be0710
+
+{
+    "RouteTable": {
+        "Associations": [],
+        "PropagatingVgws": [],
+        "RouteTableId": "rtb-07715d57c56bd94f2",
+        "Routes": [
+            {
+                "DestinationCidrBlock": "10.0.0.0/16",
+                "GatewayId": "local",
+                "Origin": "CreateRouteTable",
+                "State": "active"
+            }
+        ],
+        "Tags": [],
+        "VpcId": "vpc-036813beb28be0710"
+    }
+}
+
+# RouteTable-2 [Private]
+
+# aws ec2 create-route-table --vpc-id vpc-036813beb28be0710
+
+{
+    "RouteTable": {
+        "Associations": [],
+        "PropagatingVgws": [],
+        "RouteTableId": "rtb-098e36ef350476777",
+        "Routes": [
+            {
+                "DestinationCidrBlock": "10.0.0.0/16",
+                "GatewayId": "local",
+                "Origin": "CreateRouteTable",
+                "State": "active"
+            }
+        ],
+        "Tags": [],
+        "VpcId": "vpc-036813beb28be0710"
+    }
+}
+
+
+
+Create a route in the route table that points all traffic (0.0.0.0/0) to the Internet gateway.
+
+# aws ec2 create-route --route-table-id "rtb-07715d57c56bd94f2" --destination-cidr-block 0.0.0.0/0 --gateway-id "igw-084a3b4b5a4113dd4"
+
+{
+    "Return": true
+}
+
+
+# aws ec2 describe-subnets --filters "Name=vpc-id,Values=vpc-036813beb28be0710" --query 'Subnets[*].{ID:SubnetId,CIDR:CidrBlock}'
+
+[
+    {
+        "ID": "subnet-0ade9f8d7d4c6f62e",
+        "CIDR": "10.0.1.0/24"
+    },
+    {
+        "ID": "subnet-0cb2a499bfd075c70",
+        "CIDR": "10.0.4.0/24"
+    },
+    {
+        "ID": "subnet-04346daa909540389",
+        "CIDR": "10.0.3.0/24"
+    },
+    {
+        "ID": "subnet-035c5ce122305657d",
+        "CIDR": "10.0.2.0/24"
+    }
+]
+
+Subnet Association with RouteTable i.e. Public RouteTable:
+
+# aws ec2 associate-route-table  --subnet-id "subnet-0ade9f8d7d4c6f62e" --route-table-id rtb-07715d57c56bd94f2
+{
+    "AssociationId": "rtbassoc-005e1740f86c8b647"
+}
+# aws ec2 associate-route-table  --subnet-id "subnet-035c5ce122305657d" --route-table-id rtb-07715d57c56bd94f2
+{
+    "AssociationId": "rtbassoc-09a27f0de249369d6"
+}
+
+Subnet Association with RouteTable i.e. Private RouteTable:
+
+# aws ec2 associate-route-table  --subnet-id "subnet-04346daa909540389" --route-table-id rtb-098e36ef350476777
+{
+    "AssociationId": "rtbassoc-0ac80b08d66cc1a2c"
+}
+
+# aws ec2 associate-route-table  --subnet-id "subnet-0cb2a499bfd075c70" --route-table-id rtb-098e36ef350476777
+
+{
+    "AssociationId": "rtbassoc-0327437734dac12de"
+}
+
