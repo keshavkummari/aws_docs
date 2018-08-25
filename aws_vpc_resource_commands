@@ -1,0 +1,578 @@
+#--------------------------------------------------#
+To Create a VPC:
+#--------------------------------------------------#
+# aws ec2 create-vpc --cidr-block 10.0.0.0/16
+
+{
+    "Vpc": {
+        "CidrBlock": "10.0.0.0/16",
+        "DhcpOptionsId": "dopt-c13ea7ba",
+        "State": "pending",
+        "VpcId": "vpc-0d78505d0709da855",
+        "InstanceTenancy": "default",
+        "Ipv6CidrBlockAssociationSet": [],
+        "CidrBlockAssociationSet": [
+            {
+                "AssociationId": "vpc-cidr-assoc-00b62a6bcde312d6b",
+                "CidrBlock": "10.0.0.0/16",
+                "CidrBlockState": {
+                    "State": "associated"
+                }
+            }
+        ],
+        "IsDefault": false,
+        "Tags": []
+    }
+}
+
+
+#--------------------------------------------------#
+To Create Internet Gateway:
+#--------------------------------------------------#
+# aws ec2 create-internet-gateway
+{
+    "InternetGateway": {
+        "Attachments": [],
+        "InternetGatewayId": "igw-0656241eb9d87f111",
+        "Tags": []
+    }
+}
+
+#--------------------------------------------------#
+Attach Internet Gateway with VPC:
+#--------------------------------------------------#
+# aws ec2 attach-internet-gateway --vpc-id "vpc-0d78505d0709da855" --internet-gateway-id "igw-0656241eb9d87f111" --region us-east-1
+
+#--------------------------------------------------#
+To Create Subnet :
+#--------------------------------------------------#
+# aws ec2 create-subnet --vpc-id "vpc-0d78505d0709da855" --cidr-block 10.0.1.0/24 --availability-zone "us-east-1a"
+
+{
+    "Subnet": {
+        "AvailabilityZone": "us-east-1a",
+        "AvailableIpAddressCount": 251,
+        "CidrBlock": "10.0.1.0/24",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false,
+        "State": "pending",
+        "SubnetId": "subnet-07363644efa29a6ff",
+        "VpcId": "vpc-0d78505d0709da855",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": []
+    }
+}
+
+
+# aws ec2 create-subnet --vpc-id "vpc-0d78505d0709da855" --cidr-block 10.0.2.0/24 --availability-zone "us-east-1b"
+
+{
+    "Subnet": {
+        "AvailabilityZone": "us-east-1b",
+        "AvailableIpAddressCount": 251,
+        "CidrBlock": "10.0.2.0/24",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false,
+        "State": "pending",
+        "SubnetId": "subnet-02e65a332266e0b51",
+        "VpcId": "vpc-0d78505d0709da855",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": []
+    }
+}
+
+
+# aws ec2 create-subnet --vpc-id "vpc-0d78505d0709da855" --cidr-block 10.0.3.0/24 --availability-zone "us-east-1a"
+
+{
+    "Subnet": {
+        "AvailabilityZone": "us-east-1a",
+        "AvailableIpAddressCount": 251,
+        "CidrBlock": "10.0.3.0/24",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false,
+        "State": "pending",
+        "SubnetId": "subnet-07f720f68a22a72e3",
+        "VpcId": "vpc-0d78505d0709da855",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": []
+    }
+}
+
+
+# aws ec2 create-subnet --vpc-id "vpc-0d78505d0709da855" --cidr-block 10.0.4.0/24 --availability-zone "us-east-1b"
+
+{
+    "Subnet": {
+        "AvailabilityZone": "us-east-1b",
+        "AvailableIpAddressCount": 251,
+        "CidrBlock": "10.0.4.0/24",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false,
+        "State": "pending",
+        "SubnetId": "subnet-07598770bf77ac2a9",
+        "VpcId": "vpc-0d78505d0709da855",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": []
+    }
+}
+
+
+#--------------------------------------------------#
+Create a custom route table for your VPC.
+#--------------------------------------------------#
+
+# RouteTable-1 [Public]
+
+# aws ec2 create-route-table --vpc-id vpc-0d78505d0709da855
+
+{
+    "RouteTable": {
+        "Associations": [],
+        "PropagatingVgws": [],
+        "RouteTableId": "rtb-07d1ffdcfac79a5ec",
+        "Routes": [
+            {
+                "DestinationCidrBlock": "10.0.0.0/16",
+                "GatewayId": "local",
+                "Origin": "CreateRouteTable",
+                "State": "active"
+            }
+        ],
+        "Tags": [],
+        "VpcId": "vpc-0d78505d0709da855"
+    }
+}
+
+
+#--------------------------------------------------#
+# RouteTable-2 [Private]
+#--------------------------------------------------#
+
+# aws ec2 create-route-table --vpc-id vpc-0d78505d0709da855
+
+{
+    "RouteTable": {
+        "Associations": [],
+        "PropagatingVgws": [],
+        "RouteTableId": "rtb-025e00288f84785ab",
+        "Routes": [
+            {
+                "DestinationCidrBlock": "10.0.0.0/16",
+                "GatewayId": "local",
+                "Origin": "CreateRouteTable",
+                "State": "active"
+            }
+        ],
+        "Tags": [],
+        "VpcId": "vpc-0d78505d0709da855"
+    }
+}
+
+
+#--------------------------------------------------#
+Create a route in the route table that points all traffic (0.0.0.0/0) to the Internet gateway.
+#--------------------------------------------------#
+
+# aws ec2 create-route --route-table-id "rtb-07d1ffdcfac79a5ec" --destination-cidr-block 0.0.0.0/0 --gateway-id "igw-0656241eb9d87f111"
+{
+    "Return": true
+}
+
+#--------------------------------------------------#
+To check list of subnets part of a specific VPC :
+#--------------------------------------------------#
+
+# aws ec2 describe-subnets --filters "Name=vpc-id,Values=vpc-0d78505d0709da855" --query 'Subnets[*].{ID:SubnetId,CIDR:CidrBlock}'
+
+[
+    {
+        "ID": "subnet-02e65a332266e0b51",
+        "CIDR": "10.0.2.0/24"
+    },
+    {
+        "ID": "subnet-07598770bf77ac2a9",
+        "CIDR": "10.0.4.0/24"
+    },
+    {
+        "ID": "subnet-07363644efa29a6ff",
+        "CIDR": "10.0.1.0/24"
+    },
+    {
+        "ID": "subnet-07f720f68a22a72e3",
+        "CIDR": "10.0.3.0/24"
+    }
+]
+
+#----------------------------------------------------------#
+Subnet Association with RouteTable i.e. Public RouteTable:
+#----------------------------------------------------------#
+
+# aws ec2 associate-route-table  --subnet-id "subnet-07363644efa29a6ff" --route-table-id "rtb-07d1ffdcfac79a5ec"
+{
+    "AssociationId": "rtbassoc-06677af9adb3a6638"
+}
+
+
+# aws ec2 associate-route-table  --subnet-id "subnet-02e65a332266e0b51" --route-table-id "rtb-07d1ffdcfac79a5ec"
+
+{
+    "AssociationId": "rtbassoc-00b1337668691bfe7"
+}
+
+#----------------------------------------------------------#
+Subnet Association with RouteTable i.e. Private RouteTable:
+#----------------------------------------------------------#
+
+# aws ec2 associate-route-table  --subnet-id "subnet-07f720f68a22a72e3" --route-table-id "rtb-025e00288f84785ab"
+{
+    "AssociationId": "rtbassoc-0f68502cbec437236"
+}
+
+
+# aws ec2 associate-route-table  --subnet-id "subnet-07598770bf77ac2a9" --route-table-id "rtb-025e00288f84785ab"
+{
+    "AssociationId": "rtbassoc-0652a79d87dc52d07"
+}
+#----------------------------------------------------------#
+Auto AssignIPV4 Public IP on Subnets :
+#----------------------------------------------------------#
+
+# aws ec2 modify-subnet-attribute --subnet-id "subnet-07363644efa29a6ff" --map-public-ip-on-launch
+
+# aws ec2 modify-subnet-attribute --subnet-id "subnet-02e65a332266e0b51" --map-public-ip-on-launch
+
+#----------------------------------------------------------#
+Launch an Instance into Your Subnet
+#----------------------------------------------------------#
+To launch and connect to an instance in your public subnet
+
+Create a key pair and use the --query option and the --output text option to pipe your private key directly into a file with the .pem extension.
+
+# aws ec2 create-key-pair --key-name kk_01 --query 'KeyMaterial' --output text > kk_01.pem
+
+#----------------------------------------------------------#
+Create Security Group on Public Subnet :
+#----------------------------------------------------------#
+Create a security group in your VPC, and add a rule that allows SSH access from anywhere.
+
+# aws ec2 create-security-group --group-name SSH_Access --description "Security group for SSH Access" --vpc-id "vpc-0d78505d0709da855"
+
+{
+    "GroupId": "sg-007c8a12e70b7ff38"
+}
+
+Port-22:
+# aws ec2 authorize-security-group-ingress --group-id "sg-007c8a12e70b7ff38" --protocol tcp --port 22 --cidr 0.0.0.0/0
+
+Port-80:
+# aws ec2 authorize-security-group-ingress --group-id ""sg-007c8a12e70b7ff38"" --protocol tcp --port 80 --cidr 0.0.0.0/0
+
+Port-443:
+# aws ec2 authorize-security-group-ingress --group-id ""sg-007c8a12e70b7ff38"" --protocol tcp --port 443 --cidr 0.0.0.0/0
+#----------------------------------------------------------#
+Creates a network ACL for the specified VPC
+#----------------------------------------------------------#
+# aws ec2 describe-network-acls
+
+# aws ec2 create-network-acl --vpc-id "vpc-0d78505d0709da855"
+
+{
+    "NetworkAcl": {
+        "Associations": [],
+        "Entries": [
+            {
+                "CidrBlock": "0.0.0.0/0",
+                "Egress": true,
+                "IcmpTypeCode": {},
+                "PortRange": {},
+                "Protocol": "-1",
+                "RuleAction": "deny",
+                "RuleNumber": 32767
+            },
+            {
+                "CidrBlock": "0.0.0.0/0",
+                "Egress": false,
+                "IcmpTypeCode": {},
+                "PortRange": {},
+                "Protocol": "-1",
+                "RuleAction": "deny",
+                "RuleNumber": 32767
+            }
+        ],
+        "IsDefault": false,
+        "NetworkAclId": "acl-0f60a669a46a348b0",
+        "Tags": [],
+        "VpcId": "vpc-0d78505d0709da855"
+    }
+}
+
+#----------------------------------------------------------#
+To create a network ACL entry
+#----------------------------------------------------------#
+The rule allows ingress traffic from any IPv4 address (0.0.0.0/0) on UDP port 53 (DNS) into any associated subnet.
+
+# aws ec2 create-network-acl-entry --network-acl-id "acl-0f60a669a46a348b0" --ingress --rule-number 100 --protocol udp --port-range From=53,To=53 --cidr-block 0.0.0.0/0 --rule-action allow
+
+This example creates a rule for the specified network ACL that allows ingress traffic from any IPv6 address (::/0) on TCP port 80 (HTTP).
+
+# aws ec2 create-network-acl-entry --network-acl-id "acl-0f60a669a46a348b0" --ingress --rule-number 120 --protocol tcp --port-range From=80,To=80 --ipv6-cidr-block ::/0 --rule-action allow
+
+#----------------------------------------------------------#
+
+#----------------------------------------------------------#
+Launch an instance into your public subnet, using the security group and key pair you've created.
+#----------------------------------------------------------#
+# aws ec2 run-instances --image-id ami-6871a115 --count 1 --instance-type t2.micro --key-name kk_01 --security-group-ids "sg-007c8a12e70b7ff38" --subnet-id "subnet-07363644efa29a6ff"
+
+{
+    "Groups": [],
+    "Instances": [
+        {
+            "AmiLaunchIndex": 0,
+            "ImageId": "ami-6871a115",
+            "InstanceId": "i-05a6db76d8992792f",
+            "InstanceType": "t2.micro",
+            "KeyName": "kk_01",
+            "LaunchTime": "2018-08-25T15:20:41.000Z",
+            "Monitoring": {
+                "State": "disabled"
+            },
+            "Placement": {
+                "AvailabilityZone": "us-east-1a",
+                "GroupName": "",
+                "Tenancy": "default"
+            },
+            "PrivateDnsName": "ip-10-0-1-244.ec2.internal",
+            "PrivateIpAddress": "10.0.1.244",
+            "ProductCodes": [],
+            "PublicDnsName": "",
+            "State": {
+                "Code": 0,
+                "Name": "pending"
+            },
+            "StateTransitionReason": "",
+            "SubnetId": "subnet-07363644efa29a6ff",
+            "VpcId": "vpc-0d78505d0709da855",
+            "Architecture": "x86_64",
+            "BlockDeviceMappings": [],
+            "ClientToken": "",
+            "EbsOptimized": false,
+            "Hypervisor": "xen",
+            "NetworkInterfaces": [
+                {
+                    "Attachment": {
+                        "AttachTime": "2018-08-25T15:20:41.000Z",
+                        "AttachmentId": "eni-attach-005e65cd06f55713a",
+                        "DeleteOnTermination": true,
+                        "DeviceIndex": 0,
+                        "Status": "attaching"
+                    },
+                    "Description": "",
+                    "Groups": [
+                        {
+                            "GroupName": "SSH_Access",
+                            "GroupId": "sg-007c8a12e70b7ff38"
+                        }
+                    ],
+                    "Ipv6Addresses": [],
+                    "MacAddress": "12:f5:85:3d:ec:f8",
+                    "NetworkInterfaceId": "eni-0a57059b0d255ba13",
+                    "OwnerId": "126211257110",
+                    "PrivateIpAddress": "10.0.1.244",
+                    "PrivateIpAddresses": [
+                        {
+                            "Primary": true,
+                            "PrivateIpAddress": "10.0.1.244"
+                        }
+                    ],
+                    "SourceDestCheck": true,
+                    "Status": "in-use",
+                    "SubnetId": "subnet-07363644efa29a6ff",
+                    "VpcId": "vpc-0d78505d0709da855"
+                }
+            ],
+            "RootDeviceName": "/dev/sda1",
+            "RootDeviceType": "ebs",
+            "SecurityGroups": [
+                {
+                    "GroupName": "SSH_Access",
+                    "GroupId": "sg-007c8a12e70b7ff38"
+                }
+            ],
+            "SourceDestCheck": true,
+            "StateReason": {
+                "Code": "pending",
+                "Message": "pending"
+            },
+            "VirtualizationType": "hvm",
+            "CpuOptions": {
+                "CoreCount": 1,
+                "ThreadsPerCore": 1
+            }
+        }
+    ],
+    "OwnerId": "126211257110",
+    "ReservationId": "r-0064a0a23570797db"
+}
+
+
+#----------------- Check the Instance Details--------------#
+# aws ec2 describe-instances --instance-id "i-05a6db76d8992792f"
+#----------------------------------------------------------#
+
+#----------------------------------------------------------#
+Do SSH to EC2 instance from Base machine:
+#----------------------------------------------------------#
+
+$ ssh -i "kk_01.pem" ec2-user@18.205.155.4
+
+[ec2-user@ip-10-0-1-143 ~]$
+
+
+#----------------------------------------------------------#
+To create an Amazon RDS DB instance
+#----------------------------------------------------------#
+
+Create SecurityGroup for RDS:
+
+# aws rds create-db-security-group --db-security-group-name "sg_mydb" --db-security-group-description "My DB Security Group"
+
+{
+    "DBSecurityGroup": {
+        "OwnerId": "126211257110",
+        "DBSecurityGroupName": "sg_mydb",
+        "DBSecurityGroupDescription": "My DB Security Group",
+        "VpcId": "vpc-75b7490f",
+        "EC2SecurityGroups": [],
+        "IPRanges": [],
+        "DBSecurityGroupArn": "arn:aws:rds:us-east-1:126211257110:secgrp:sg_mydb"
+    }
+}
+
+The following create-db-instance command launches a new Amazon RDS DB instance:
+
+# aws rds create-db-instance --db-instance-identifier sg-cli-test \
+--allocated-storage 20 --db-instance-class db.t2.micro --engine mysql \
+--master-username cloudcicd --master-user-password cloudcicd
+
+{
+    "DBInstance": {
+        "DBInstanceIdentifier": "sg-cli-test",
+        "DBInstanceClass": "db.t2.micro",
+        "Engine": "mysql",
+        "DBInstanceStatus": "creating",
+        "MasterUsername": "cloudcicd",
+        "AllocatedStorage": 20,
+        "PreferredBackupWindow": "04:49-05:19",
+        "BackupRetentionPeriod": 1,
+        "DBSecurityGroups": [],
+        "VpcSecurityGroups": [
+            {
+                "VpcSecurityGroupId": "sg-5c5eb516",
+                "Status": "active"
+            }
+        ],
+        "DBParameterGroups": [
+            {
+                "DBParameterGroupName": "default.mysql5.7",
+                "ParameterApplyStatus": "in-sync"
+            }
+        ],
+        "DBSubnetGroup": {
+            "DBSubnetGroupName": "default",
+            "DBSubnetGroupDescription": "default",
+            "VpcId": "vpc-75b7490f",
+            "SubnetGroupStatus": "Complete",
+            "Subnets": [
+                {
+                    "SubnetIdentifier": "subnet-ee45eeb2",
+                    "SubnetAvailabilityZone": {
+                        "Name": "us-east-1c"
+                    },
+                    "SubnetStatus": "Active"
+                },
+                {
+                    "SubnetIdentifier": "subnet-8387f9c9",
+                    "SubnetAvailabilityZone": {
+                        "Name": "us-east-1b"
+                    },
+                    "SubnetStatus": "Active"
+                },
+                {
+                    "SubnetIdentifier": "subnet-461be478",
+                    "SubnetAvailabilityZone": {
+                        "Name": "us-east-1e"
+                    },
+                    "SubnetStatus": "Active"
+                },
+                {
+                    "SubnetIdentifier": "subnet-91c961f6",
+                    "SubnetAvailabilityZone": {
+                        "Name": "us-east-1d"
+                    },
+                    "SubnetStatus": "Active"
+                },
+                {
+                    "SubnetIdentifier": "subnet-1ea2cb11",
+                    "SubnetAvailabilityZone": {
+                        "Name": "us-east-1f"
+                    },
+                    "SubnetStatus": "Active"
+                },
+                {
+                    "SubnetIdentifier": "subnet-6510a54b",
+                    "SubnetAvailabilityZone": {
+                        "Name": "us-east-1a"
+                    },
+                    "SubnetStatus": "Active"
+                }
+            ]
+        },
+        "PreferredMaintenanceWindow": "tue:09:23-tue:09:53",
+        "PendingModifiedValues": {
+            "MasterUserPassword": "****"
+        },
+        "MultiAZ": false,
+        "EngineVersion": "5.7.22",
+        "AutoMinorVersionUpgrade": true,
+        "ReadReplicaDBInstanceIdentifiers": [],
+        "LicenseModel": "general-public-license",
+        "OptionGroupMemberships": [
+            {
+                "OptionGroupName": "default:mysql-5-7",
+                "Status": "in-sync"
+            }
+        ],
+        "PubliclyAccessible": true,
+        "StorageType": "standard",
+        "DbInstancePort": 0,
+        "StorageEncrypted": false,
+        "DbiResourceId": "db-UF5PDD4BJJ5LE7DR63JY3QWN2Y",
+        "CACertificateIdentifier": "rds-ca-2015",
+        "DomainMemberships": [],
+        "CopyTagsToSnapshot": false,
+        "MonitoringInterval": 0,
+        "DBInstanceArn": "arn:aws:rds:us-east-1:126211257110:db:sg-cli-test",
+        "IAMDatabaseAuthenticationEnabled": false,
+        "PerformanceInsightsEnabled": false
+    }
+}
+
+
+#-------------------------------------------------------------------#
+# yum install php php-mysql  http -y
+#-------------------------------------------------------------------#
+# vi connect.php
+
+<?php
+$username = "cloudcicd";
+$password = "cloudcicd";
+$hostname = "cloudcicd.ccog9dntthgl.us-east-1.rds.amazonaws.com:3306";
+$dbname = "sg-cli-test";
+
+//connection to the database
+$dbhandle = mysql_connect($hostname, $username, $password) or die("Unable to connect to MySQL");
+echo "Connected to MySQL using username - $username, password - $password, host - $hostname<br>";
+$selected = mysql_select_db("$dbname",$dbhandle)   or die("Unable to connect to MySQL DB - check the database name and try again.");
+?>
