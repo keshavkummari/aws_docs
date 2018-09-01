@@ -1,0 +1,301 @@
+#------------------------------------------------------------------------#
+VPC Objects :
+#------------------------------------------------------------------------#
+1. Subnets
+2. Security Groups
+3. Network ACLs
+4. VPN Attachments
+5. Internet Gateways
+6. Route Tables
+7. Network Interfaces
+8. VPC Peering Connections
+
+#------------------------------------------------------------------------#
+Create a VPC with the specified IPv4 CIDR block :
+#------------------------------------------------------------------------#
+# aws ec2 create-vpc --cidr-block 10.0.0.0/16
+                                                 
+{
+    "Vpc": {
+        "VpcId": "vpc-09dd1cf6e2d98c5ec",
+        "InstanceTenancy": "default",
+        "Tags": [],
+        "CidrBlockAssociationSet": [
+            {
+                "AssociationId": "vpc-cidr-assoc-0bb49f61e4e3e57dd",
+                "CidrBlock": "10.0.0.0/16",
+                "CidrBlockState": {
+                    "State": "associated"
+                }
+            }
+        ],
+        "Ipv6CidrBlockAssociationSet": [],
+        "State": "pending",
+        "DhcpOptionsId": "dopt-efba3887",
+        "CidrBlock": "10.0.0.0/16",
+        "IsDefault": false
+    }
+}
+                
+#------------------------------------------------------------------------#
+Create an Internet gateway :
+#------------------------------------------------------------------------#
+# aws ec2 create-internet-gateway
+{
+    "InternetGateway": {
+        "Tags": [],
+        "Attachments": [],
+        "InternetGatewayId": "igw-0a0a78de5913aa99f"
+    }
+}
+#------------------------------------------------------------------------#
+Attach the Internet gateway to your VPC:
+#------------------------------------------------------------------------#
+# aws ec2 attach-internet-gateway --vpc-id "vpc-09dd1cf6e2d98c5ec" --internet-gateway-id "igw-0a0a78de5913aa99f"
+
+#------------------------------------------------------------------------#
+Create two custom route table for your VPC :
+#------------------------------------------------------------------------#
+# aws ec2 create-route-table --vpc-id "vpc-09dd1cf6e2d98c5ec"
+{
+    "RouteTable": {
+        "Associations": [],
+        "RouteTableId": "rtb-042c429f9301a4c07",
+        "VpcId": "vpc-09dd1cf6e2d98c5ec",
+        "PropagatingVgws": [],
+        "Tags": [],
+        "Routes": [
+            {
+                "GatewayId": "local",
+                "DestinationCidrBlock": "10.0.0.0/16",
+                "State": "active",
+                "Origin": "CreateRouteTable"
+            }
+        ]
+    }
+}
+
+# aws ec2 create-route-table --vpc-id "vpc-09dd1cf6e2d98c5ec"
+{
+    "RouteTable": {
+        "Associations": [],
+        "RouteTableId": "rtb-03c28fec961b45cf3",
+        "VpcId": "vpc-09dd1cf6e2d98c5ec",
+        "PropagatingVgws": [],
+        "Tags": [],
+        "Routes": [
+            {
+                "GatewayId": "local",
+                "DestinationCidrBlock": "10.0.0.0/16",
+                "State": "active",
+                "Origin": "CreateRouteTable"
+            }
+        ]
+    }
+}
+
+# aws ec2 delete-route-table --route-table-id "rtb-0e14cd58d65ccbc85"                                     
+#------------------------------------------------------------------------#
+Create a route in the route table that points all traffic (0.0.0.0/0) to the Internet gateway.
+#------------------------------------------------------------------------#
+# aws ec2 create-route --route-table-id "rtb-042c429f9301a4c07" --destination-cidr-block 0.0.0.0/0 --gateway-id "igw-0a0a78de5913aa99f"
+{
+    "Return": true
+}
+#------------------------------------------------------------------------#
+Subnets 4 Subnets under a specific VPC: 
+#------------------------------------------------------------------------#
+
+# aws ec2 create-subnet --vpc-id "vpc-09dd1cf6e2d98c5ec" --cidr-block 10.0.1.0/24 --availability-zone "ap-south-1a"           
+{                                                                                                                                                    
+    "Subnet": {                                                                                                                                      
+        "AvailabilityZone": "ap-south-1a",                                                                                                           
+        "AvailableIpAddressCount": 251,                                                                                                              
+        "DefaultForAz": false,                                                                                                                       
+        "Ipv6CidrBlockAssociationSet": [],                                                                                                           
+        "VpcId": "vpc-09dd1cf6e2d98c5ec",                                                                                                            
+        "State": "pending",                                                                                                                          
+        "MapPublicIpOnLaunch": false,                                                                                                                
+        "SubnetId": "subnet-08be2b7f5a2d42b7f",                                                                                                      
+        "CidrBlock": "10.0.1.0/24",                                                                                                                  
+        "AssignIpv6AddressOnCreation": false                                                                                                         
+    }                                                                                                                                                
+}                                                                                                                                                    
+# aws ec2 create-subnet --vpc-id "vpc-09dd1cf6e2d98c5ec" --cidr-block 10.0.2.0/24 --availability-zone "ap-south-1b"           
+{                                                                                                                                                    
+    "Subnet": {                                                                                                                                      
+        "AvailabilityZone": "ap-south-1b",                                                                                                           
+        "AvailableIpAddressCount": 251,                                                                                                              
+        "DefaultForAz": false,                                                                                                                       
+        "Ipv6CidrBlockAssociationSet": [],                                                                                                           
+        "VpcId": "vpc-09dd1cf6e2d98c5ec",                                                                                                            
+        "State": "pending",                                                                                                                          
+        "MapPublicIpOnLaunch": false,                                                                                                                
+        "SubnetId": "subnet-0201f7edf6a057b8c",                                                                                                      
+        "CidrBlock": "10.0.2.0/24",                                                                                                                  
+        "AssignIpv6AddressOnCreation": false                                                                                                         
+    }                                                                                                                                                
+}                                                                                                                                                    
+# aws ec2 create-subnet --vpc-id "vpc-09dd1cf6e2d98c5ec" --cidr-block 10.0.3.0/24 --availability-zone "ap-south-1a"           
+{                                                                                                                                                    
+    "Subnet": {                                                                                                                                      
+        "AvailabilityZone": "ap-south-1a",                                                                                                           
+        "AvailableIpAddressCount": 251,                                                                                                              
+        "DefaultForAz": false,                                                                                                                       
+        "Ipv6CidrBlockAssociationSet": [],                                                                                                           
+        "VpcId": "vpc-09dd1cf6e2d98c5ec",                                                                                                            
+        "State": "pending",                                                                                                                          
+        "MapPublicIpOnLaunch": false,                                                                                                                
+        "SubnetId": "subnet-0c497e7224b63f4c5",                                                                                                      
+        "CidrBlock": "10.0.3.0/24",                                                                                                                  
+        "AssignIpv6AddressOnCreation": false                                                                                                         
+    }                                                                                                                                                
+}                                                                                                                                                    
+# aws ec2 create-subnet --vpc-id "vpc-09dd1cf6e2d98c5ec" --cidr-block 10.0.4.0/24 --availability-zone "ap-south-1b"           
+{                                                                                                                                                    
+    "Subnet": {                                                                                                                                      
+        "AvailabilityZone": "ap-south-1b",                                                                                                           
+        "AvailableIpAddressCount": 251,                                                                                                              
+        "DefaultForAz": false,                                                                                                                       
+        "Ipv6CidrBlockAssociationSet": [],                                                                                                           
+        "VpcId": "vpc-09dd1cf6e2d98c5ec",                                                                                                            
+        "State": "pending",                                                                                                                          
+        "MapPublicIpOnLaunch": false,                                                                                                                
+        "SubnetId": "subnet-042cfe8edf53bc513",                                                                                                      
+        "CidrBlock": "10.0.4.0/24",                                                                                                                  
+        "AssignIpv6AddressOnCreation": false                                                                                                         
+    }                                                                                                                                                
+}                                                                                                                                                    
+                                               
+#------------------------------------------------------------------------#
+List the Subnets in a Specific VPC:
+#------------------------------------------------------------------------#
+# aws ec2 describe-subnets --filters "Name=vpc-id,Values=vpc-09dd1cf6e2d98c5ec" --query 'Subnets[*].{ID:SubnetId,CIDR:CidrBlock}'
+[
+    {
+        "CIDR": "10.0.1.0/24",
+        "ID": "subnet-08be2b7f5a2d42b7f"
+    },
+    {
+        "CIDR": "10.0.3.0/24",
+        "ID": "subnet-0c497e7224b63f4c5"
+    },
+    {
+        "CIDR": "10.0.2.0/24",
+        "ID": "subnet-0201f7edf6a057b8c"
+    },
+    {
+        "CIDR": "10.0.4.0/24",
+        "ID": "subnet-042cfe8edf53bc513"
+    }
+]
+                                         
+# aws ec2 delete-subnet --subnet-id "subnet-081d94165e923c815"        
+#------------------------------------------------------------------------#
+Subnet Association with Public Route Table:
+#------------------------------------------------------------------------#
+
+# aws ec2 associate-route-table  --subnet-id "subnet-08be2b7f5a2d42b7f" --route-table-id "rtb-042c429f9301a4c07"
+{
+    "AssociationId": "rtbassoc-019f49a9c97982d4c"
+}
+#------------------------------------------------------------------------#
+Subnet Association with Public Route Table:
+#------------------------------------------------------------------------#
+# aws ec2 associate-route-table  --subnet-id "subnet-0201f7edf6a057b8c" --route-table-id "rtb-042c429f9301a4c07"
+{
+    "AssociationId": "rtbassoc-08b68281d7ad91a19"
+}
+#------------------------------------------------------------------------#
+Subnet Association with Private Route Table:
+#------------------------------------------------------------------------#
+# aws ec2 associate-route-table  --subnet-id "subnet-0c497e7224b63f4c5" --route-table-id "rtb-03c28fec961b45cf3"
+{
+    "AssociationId": "rtbassoc-0f32a5c84f7f017a9"
+}                                                 
+#------------------------------------------------------------------------#
+Subnet Association with Private Route Table:
+#------------------------------------------------------------------------#
+# aws ec2 associate-route-table  --subnet-id "subnet-042cfe8edf53bc513" --route-table-id "rtb-03c28fec961b45cf3"
+{
+    "AssociationId": "rtbassoc-051b7b7bfeb0a743d"
+}
+
+#------------------------------------------------------------------------#
+To create a network ACL for the specified VPC.
+#------------------------------------------------------------------------#
+# aws ec2 create-network-acl --vpc-id "vpc-09dd1cf6e2d98c5ec"
+
+# aws ec2 create-network-acl-entry --network-acl-id "acl-5fb85d36" --ingress --rule-number 100 --protocol udp --port-range From=53,To=53 --cidr-block 0.0.0.0/0 --rule-action allow
+
+# aws ec2 create-network-acl-entry --network-acl-id "acl-5fb85d36" --ingress --rule-number 110 --protocol tcp --port-range From=22,To=22 --ipv6-cidr-block 0.0.0.0/0 --rule-action allow
+# aws ec2 create-network-acl-entry --network-acl-id "acl-5fb85d36" --ingress --rule-number 120 --protocol tcp --port-range From=80,To=80 --ipv6-cidr-block 0.0.0.0/0 --rule-action allow
+# aws ec2 create-network-acl-entry --network-acl-id "acl-5fb85d36" --ingress --rule-number 130 --protocol tcp --port-range From=80,To=80 --ipv6-cidr-block ::/0 --rule-action allow
+
+#------------------------------------------------------------------------#
+Associate a Security Group under a specific VPC:
+#------------------------------------------------------------------------#
+# aws ec2 create-security-group --group-name "elb_sg" --description "ELB SG PORT-80" --vpc-id "vpc-09dd1cf6e2d98c5ec"
+{
+    "GroupId": "sg-001ca8bd6a8f21fb0"
+}                                 
+#------------------------------------------------------------------------#
+To view Security Groups:
+#------------------------------------------------------------------------#
+# aws ec2 describe-security-groups
+
+#------------------------------------------------------------------------#
+Enable a specific port on Security Group:
+#------------------------------------------------------------------------#
+# aws ec2 authorize-security-group-ingress --group-id "sg-001ca8bd6a8f21fb0" --protocol tcp --port 80 --cidr 0.0.0.0/0
+
+#------------------------------------------------------------------------#
+Create a Elastic Load Balancer with an HTTP Listener by attaching Security Group, and Subnets:
+#------------------------------------------------------------------------#
+# aws elb create-load-balancer --load-balancer-name "ELBASOU" --listeners "Protocol=HTTP,LoadBalancerPort=80,InstanceProtocol=HTTP,InstancePort=80" --subnets "subnet-08be2b7f5a2d42b7f" "subnet-0201f7edf6a057b8c" --security-groups "sg-001ca8bd6a8f21fb0" 
+{
+    "DNSName": "ELBASOU-28597412.ap-south-1.elb.amazonaws.com"
+}
+
+# aws elb delete-load-balancer --load-balancer-name my-load-balancer
+#------------------------------------------------------------------------#
+Configure Health Check settings for your Backend EC2 instances:
+#------------------------------------------------------------------------#
+# aws elb configure-health-check --load-balancer-name "ELBASOU" --health-check Target=HTTP:80/png,Interval=10,UnhealthyThreshold=2,HealthyThreshold=2,Timeout=3
+{
+    "HealthCheck": {
+        "HealthyThreshold": 2,
+        "Interval": 10,
+        "Target": "HTTP:80/png",
+        "Timeout": 3,
+        "UnhealthyThreshold": 2
+    }
+}
+
+#------------------------------------------------------------------------#
+# aws ec2 create-security-group --group-name "sg_elb_as" --description "SSH-HTTP" --vpc-id "vpc-09dd1cf6e2d98c5ec"
+{
+    "GroupId": "sg-04d874c8ca0636d6f"
+}
+
+# aws ec2 authorize-security-group-ingress --group-id "sg-04d874c8ca0636d6f" --protocol tcp --port 80 --cidr 0.0.0.0/0
+# aws ec2 authorize-security-group-ingress --group-id "sg-04d874c8ca0636d6f" --protocol tcp --port 22 --cidr 0.0.0.0/0
+
+# cat myuserdata.txt
+#!/bin/bash
+yum update -y
+yum install http* --skip-broken -y
+service httpd start
+chkconfig httpd on
+echo "Welcome to VPC ELB & AutoScaling" > /var/www/html/index.html
+
+# aws autoscaling create-launch-configuration --launch-configuration-name "OU_LC" --key-name "nn_ckk" --image-id "ami-0912f71e06545ad88" --instance-type t2.micro --security-groups "sg-04d874c8ca0636d6f" --user-data file://myuserdata.txt
+
+#------------------------------------------------------------------------#
+# aws autoscaling create-auto-scaling-group --auto-scaling-group-name "OU_AS" --launch-configuration-name "OU_LC" --load-balancer-names "ELBASOU" --min-size 2 --max-size 5 --vpc-zone-identifier "subnet-08be2b7f5a2d42b7f" 
+
+#------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------#
