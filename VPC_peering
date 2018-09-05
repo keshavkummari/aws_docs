@@ -1,0 +1,41 @@
+
+AWS CSA 
+
+AWS - A
+
+VPC_1 :
+
+www.onlineucator.com
+
+1. VPC : vpc-0c85b90a43c151476 | onlineucator_vpc 
+
+2. Internet gateway ID : igw-080f6bdfbd405d757
+
+3. Route Table ID: rtb-099242fa9e042610c | ou_rtb_pub
+
+4. Route Table ID: rtb-01867b28b36eccf1c | ou_rtb_pri
+
+5. Subnet ID :
+	1. subnet-04a84a2e63be9ac1e | ou_sub_pub-1 | ap-south-1a
+	2. subnet-0b9260da39ee4c5e1 | ou_sub_pub-2 | ap-south-1b
+	3. subnet-0afcdcdcbe3378bf1 | ou_sub_pri-1 | ap-south-1a
+	4. subnet-00787fbd3f2bbb5c3 | ou_sub_pri-2 | ap-south-1b
+
+6. Network ACL ID: 
+	1. acl-0d452c0e7629f9a87 | ou_nacl_AZ-1a 
+	2. acl-01d373bd0185254e2 | ou_nacl_AZ-1b
+
+7. NAT Gateway ID : nat-0fd0fed0da4a9f325 | ou_sub_pub-1 | ap-south-1a
+
+8. Bastion Server : subnet-0b9260da39ee4c5e1 | ou_sub_pub-2 | ap-south-1b
+
+
+#----------------------------------------------------------------------------#
+VPC_2 : cicd
+
+www.cloudcicd.org
+
+
+AWS/DevOps Engineer : Operational Activities 
+
+Bastion(Public Subnet) >> EC2  
