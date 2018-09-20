@@ -1,0 +1,449 @@
+https://docs.aws.amazon.com/cli/latest/reference/ec2/index.html
+
+Step-1 : VPC create
+
+$ aws ec2 create-vpc --cidr-block 10.0.0.0/16
+ 
+{
+    "Vpc": {
+        "CidrBlock": "10.0.0.0/16",
+        "DhcpOptionsId": "dopt-c13ea7ba",
+        "State": "pending",
+        "VpcId": "vpc-1813c162",
+        "InstanceTenancy": "default",
+        "Ipv6CidrBlockAssociationSet": [],
+        "CidrBlockAssociationSet": [
+            {
+                "AssociationId": "vpc-cidr-assoc-d59f30b9",
+                "CidrBlock": "10.0.0.0/16",
+                "CidrBlockState": {
+                    "State": "associated"
+                }
+            }
+        ],
+        "IsDefault": false,
+        "Tags": []
+    }
+}
+
+
+Step-2 : IGW
+
+$ aws ec2 create-internet-gateway 
+
+{
+    "InternetGateway": {
+        "Attachments": [],
+        "InternetGatewayId": "igw-484f4e30",
+        "Tags": []
+    }
+}
+
+
+Step-3 : Attach IGW to Custom VPC:
+
+# aws ec2 attach-internet-gateway --vpc-id "vpc-1813c162" --internet-gateway-id "igw-484f4e30"
+
+Step-4 : Create Route Tables:
+
+# aws ec2 create-route-table --vpc-id "vpc-1813c162"
+
+{
+    "RouteTable": {
+        "Associations": [],
+        "PropagatingVgws": [],
+        "RouteTableId": "rtb-3a570e45",
+        "Routes": [
+            {
+                "DestinationCidrBlock": "10.0.0.0/16",
+                "GatewayId": "local",
+                "Origin": "CreateRouteTable",
+                "State": "active"
+            }
+        ],
+        "Tags": [],
+        "VpcId": "vpc-1813c162"
+    }
+}
+
+$ aws ec2 create-route-table --vpc-id "vpc-1813c162"
+{
+    "RouteTable": {
+        "Associations": [],
+        "PropagatingVgws": [],
+        "RouteTableId": "rtb-42471e3d",
+        "Routes": [
+            {
+                "DestinationCidrBlock": "10.0.0.0/16",
+                "GatewayId": "local",
+                "Origin": "CreateRouteTable",
+                "State": "active"
+            }
+        ],
+        "Tags": [],
+        "VpcId": "vpc-1813c162"
+    }
+}
+
+
+Step-4 : Create a route in the route table that points all traffic (0.0.0.0/0) to the Internet gateway.
+
+# aws ec2 create-route --route-table-id "rtb-3a570e45" --destination-cidr-block 0.0.0.0/0 --gateway-id "igw-484f4e30"
+
+{
+    "Return": true
+}
+
+Step-5 : Create 6 Subnets i.e. 2 Subnets will be Public & 4 should be Private part of 2 Different Availability Zones 
+
+# aws ec2 create-subnet --vpc-id "vpc-1813c162" --cidr-block 10.0.1.0/24 --availability-zone "us-east-1a" 
+
+{
+    "Subnet": {
+        "AvailabilityZone": "us-east-1a",
+        "AvailableIpAddressCount": 251,
+        "CidrBlock": "10.0.1.0/24",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false,
+        "State": "pending",
+        "SubnetId": "subnet-590c8177",
+        "VpcId": "vpc-1813c162",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": []
+    }
+}
+
+
+# aws ec2 create-subnet --vpc-id "vpc-1813c162" --cidr-block 10.0.2.0/24 --availability-zone "us-east-1b" 
+{
+    "Subnet": {
+        "AvailabilityZone": "us-east-1b",
+        "AvailableIpAddressCount": 251,
+        "CidrBlock": "10.0.2.0/24",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false,
+        "State": "pending",
+        "SubnetId": "subnet-4ac19700",
+        "VpcId": "vpc-1813c162",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": []
+    }
+}
+
+
+# aws ec2 create-subnet --vpc-id "vpc-1813c162" --cidr-block 10.0.3.0/24 --availability-zone "us-east-1a" 
+
+{
+    "Subnet": {
+        "AvailabilityZone": "us-east-1a",
+        "AvailableIpAddressCount": 251,
+        "CidrBlock": "10.0.3.0/24",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false,
+        "State": "pending",
+        "SubnetId": "subnet-390d8017",
+        "VpcId": "vpc-1813c162",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": []
+    }
+}
+
+
+# aws ec2 create-subnet --vpc-id "vpc-1813c162" --cidr-block 10.0.4.0/24 --availability-zone "us-east-1b" 
+{
+    "Subnet": {
+        "AvailabilityZone": "us-east-1b",
+        "AvailableIpAddressCount": 251,
+        "CidrBlock": "10.0.4.0/24",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false,
+        "State": "pending",
+        "SubnetId": "subnet-81c492cb",
+        "VpcId": "vpc-1813c162",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": []
+    }
+}
+
+# aws ec2 create-subnet --vpc-id "vpc-1813c162" --cidr-block 10.0.5.0/24 --availability-zone "us-east-1a" 
+{
+    "Subnet": {
+        "AvailabilityZone": "us-east-1a",
+        "AvailableIpAddressCount": 251,
+        "CidrBlock": "10.0.5.0/24",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false,
+        "State": "pending",
+        "SubnetId": "subnet-7378f55d",
+        "VpcId": "vpc-1813c162",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": []
+    }
+}
+
+# aws ec2 create-subnet --vpc-id "vpc-1813c162" --cidr-block 10.0.6.0/24 --availability-zone "us-east-1b" 
+
+{
+    "Subnet": {
+        "AvailabilityZone": "us-east-1b",
+        "AvailableIpAddressCount": 251,
+        "CidrBlock": "10.0.6.0/24",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false,
+        "State": "pending",
+        "SubnetId": "subnet-6bcb9d21",
+        "VpcId": "vpc-1813c162",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": []
+    }
+}
+
+
+Step-6 : Enable Auto-Assign-Public-IP to Subnet :
+
+Public_FacingSubnet-1
+
+# aws ec2 modify-subnet-attribute --subnet-id "subnet-590c8177" --map-public-ip-on-launch
+
+Private_FacingSubnet-2
+
+# aws ec2 modify-subnet-attribute --subnet-id "subnet-4ac19700" --map-public-ip-on-launch
+
+Step-7 : 2 Public Subnet Association with Public Route Table & 4 Private Subnets association with Private RouteTable
+
+Attach/Map Public_FacingSubnets i.e. 2 to the Public RouteTable:
+
+# aws ec2 associate-route-table  --subnet-id "subnet-590c8177" --route-table-id "rtb-3a570e45"
+{
+    "AssociationId": "rtbassoc-fba02985"
+}
+# aws ec2 associate-route-table  --subnet-id "subnet-4ac19700" --route-table-id "rtb-3a570e45"
+{
+    "AssociationId": "rtbassoc-c7aa23b9"
+}
+
+Attach/Map Private_FacingSubnets i.e. 4 to the Private RouteTable:
+
+# aws ec2 associate-route-table  --subnet-id "subnet-390d8017" --route-table-id "rtb-42471e3d"
+{
+    "AssociationId": "rtbassoc-4cb93032"
+}
+# aws ec2 associate-route-table  --subnet-id "subnet-81c492cb" --route-table-id "rtb-42471e3d"
+{
+    "AssociationId": "rtbassoc-72941d0c"
+}
+# aws ec2 associate-route-table  --subnet-id "subnet-7378f55d" --route-table-id "rtb-42471e3d"
+{
+    "AssociationId": "rtbassoc-bca52cc2"
+}
+# aws ec2 associate-route-table  --subnet-id "subnet-6bcb9d21" --route-table-id "rtb-42471e3d"
+{
+    "AssociationId": "rtbassoc-93a22bed"
+}
+
+Step-8 : To create a network ACL for the specified VPC
+
+# aws ec2 create-network-acl --vpc-id "vpc-1813c162"
+{
+    "NetworkAcl": {
+        "Associations": [],
+        "Entries": [
+            {
+                "CidrBlock": "0.0.0.0/0",
+                "Egress": true,
+                "IcmpTypeCode": {},
+                "PortRange": {},
+                "Protocol": "-1",
+                "RuleAction": "deny",
+                "RuleNumber": 32767
+            },
+            {
+                "CidrBlock": "0.0.0.0/0",
+                "Egress": false,
+                "IcmpTypeCode": {},
+                "PortRange": {},
+                "Protocol": "-1",
+                "RuleAction": "deny",
+                "RuleNumber": 32767
+            }
+        ],
+        "IsDefault": false,
+        "NetworkAclId": "acl-171f1a6d",
+        "Tags": [],
+        "VpcId": "vpc-1813c162"
+    }
+}
+
+Inbound Traffic:
+# aws ec2 create-network-acl-entry --network-acl-id "acl-171f1a6d" --ingress --rule-number 100 --protocol tcp --port-range From=22,To=22 --cidr-block 0.0.0.0/0 --rule-action allow
+# aws ec2 create-network-acl-entry --network-acl-id "acl-171f1a6d" --ingress --rule-number 110 --protocol tcp --port-range From=80,To=80 --cidr-block 0.0.0.0/0 --rule-action allow
+# aws ec2 create-network-acl-entry --network-acl-id "acl-171f1a6d" --ingress --rule-number 120 --protocol udp --port-range From=53,To=53 --cidr-block 0.0.0.0/0 --rule-action allow
+
+Outbound Traffic:
+# aws ec2 create-network-acl-entry --network-acl-id "acl-171f1a6d" --egress --rule-number 100 --protocol tcp --port-range From=22,To=22 --cidr-block 0.0.0.0/0 --rule-action allow
+# aws ec2 create-network-acl-entry --network-acl-id "acl-171f1a6d" --egress --rule-number 110 --protocol tcp --port-range From=80,To=80 --cidr-block 0.0.0.0/0 --rule-action allow
+# aws ec2 create-network-acl-entry --network-acl-id "acl-171f1a6d" --egress --rule-number 120 --protocol udp --port-range From=53,To=53 --cidr-block 0.0.0.0/0 --rule-action allow
+
+## Attach 6 Subnets to NACL:
+
+
+Step-9 : Create EC2(Bastion Server) security Groups i.e. SSH
+
+# aws ec2 create-security-group --group-name "sg_ec2_Bastion" --description "BastionServer-PORT-22" --vpc-id "vpc-1813c162"
+{
+    "GroupId": "sg-a7f8edeb"
+}
+
+Enable a specific port on Security Group:
+# aws ec2 authorize-security-group-ingress --group-id "sg-a7f8edeb" --protocol tcp --port 22 --cidr 0.0.0.0/0
+
+
+Step-10 :  Create EC2(Application/Web Server) security Groups i.e. SSH, HTTP, HTTPS, ICMP, DATABASE
+# aws ec2 create-security-group --group-name "sg_ec2_webServer" --description "WebServer-PORT-22-80" --vpc-id "vpc-1813c162"
+
+{
+    "GroupId": "sg-66feeb2a"
+}
+
+Enable a specific port on Security Group:
+# aws ec2 authorize-security-group-ingress --group-id "sg-66feeb2a" --protocol tcp --port 22 --cidr 0.0.0.0/0
+# aws ec2 authorize-security-group-ingress --group-id "sg-66feeb2a" --protocol tcp --port 80 --cidr 0.0.0.0/0
+
+
+Step-11 : Launch NAT Gateway part of one of the Public Subnet which is part of another Availability Zone i.e. us-east-1a
+
+# aws ec2 create-nat-gateway --subnet-id "subnet-590c8177" --allocation-id "eipalloc-09ac09563c1a993d2"
+{
+    "NatGateway": {
+        "CreateTime": "2018-09-20T01:31:01.000Z",
+        "NatGatewayAddresses": [
+            {
+                "AllocationId": "eipalloc-09ac09563c1a993d2"
+            }
+        ],
+        "NatGatewayId": "nat-0fa926ec6d7496a2f",
+        "State": "pending",
+        "SubnetId": "subnet-590c8177",
+        "VpcId": "vpc-1813c162"
+    }
+}
+
+Step-12 : Create a route in the route table that points all traffic (0.0.0.0/0) to the NAT gateway.
+# aws ec2 create-route --route-table-id "rtb-42471e3d" --destination-cidr-block 0.0.0.0/0 --nat-gateway-id "nat-0fa926ec6d7496a2f"
+{
+    "Return": true
+}
+
+Step-13 : Launch Bastion Server part of Public Subnet which is part of one of the Availability Zone i.e. us-east-1b
+
+# aws ec2 run-instances --image-id "ami-0ff8a91507f77f867" --count 1 --instance-type t2.micro --key-name kkummariaws --security-group-ids "sg-a7f8edeb" --subnet-id "subnet-4ac19700" --tag-specifications 'ResourceType=instance,Tags=[{Key=ToDoAdministration,Value=BastionServer}]'
+
+{
+    "Groups": [],
+    "Instances": [
+        {
+            "AmiLaunchIndex": 0,
+            "ImageId": "ami-0ff8a91507f77f867",
+            "InstanceId": "i-8c6c2e69",
+            "InstanceType": "t2.micro",
+            "KeyName": "kkummariaws",
+            "LaunchTime": "2018-09-20T01:40:49.000Z",
+            "Monitoring": {
+                "State": "disabled"
+            },
+            "Placement": {
+                "AvailabilityZone": "us-east-1b",
+                "GroupName": "",
+                "Tenancy": "default"
+            },
+            "PrivateDnsName": "ip-10-0-2-54.ec2.internal",
+            "PrivateIpAddress": "10.0.2.54",
+            "ProductCodes": [],
+            "PublicDnsName": "",
+            "State": {
+                "Code": 0,
+                "Name": "pending"
+            },
+            "StateTransitionReason": "",
+            "SubnetId": "subnet-4ac19700",
+            "VpcId": "vpc-1813c162",
+            "Architecture": "x86_64",
+            "BlockDeviceMappings": [],
+            "ClientToken": "",
+            "EbsOptimized": false,
+            "Hypervisor": "xen",
+            "NetworkInterfaces": [
+                {
+                    "Attachment": {
+                        "AttachTime": "2018-09-20T01:40:49.000Z",
+                        "AttachmentId": "eni-attach-1078bda8",
+                        "DeleteOnTermination": true,
+                        "DeviceIndex": 0,
+                        "Status": "attaching"
+                    },
+                    "Description": "",
+                    "Groups": [
+                        {
+                            "GroupName": "sg_ec2_Bastion",
+                            "GroupId": "sg-a7f8edeb"
+                        }
+                    ],
+                    "Ipv6Addresses": [],
+                    "MacAddress": "0a:ad:b0:0b:70:72",
+                    "NetworkInterfaceId": "eni-fdf8a19b",
+                    "OwnerId": "126211257110",
+                    "PrivateIpAddress": "10.0.2.54",
+                    "PrivateIpAddresses": [
+                        {
+                            "Primary": true,
+                            "PrivateIpAddress": "10.0.2.54"
+                        }
+                    ],
+                    "SourceDestCheck": true,
+                    "Status": "in-use",
+                    "SubnetId": "subnet-4ac19700",
+                    "VpcId": "vpc-1813c162"
+                }
+            ],
+            "RootDeviceName": "/dev/xvda",
+            "RootDeviceType": "ebs",
+            "SecurityGroups": [
+                {
+                    "GroupName": "sg_ec2_Bastion",
+                    "GroupId": "sg-a7f8edeb"
+                }
+            ],
+            "SourceDestCheck": true,
+            "StateReason": {
+                "Code": "pending",
+                "Message": "pending"
+            },
+            "Tags": [
+                {
+                    "Key": "ToDoAdministration",
+                    "Value": "BastionServer"
+                }
+            ],
+            "VirtualizationType": "hvm",
+            "CpuOptions": {
+                "CoreCount": 1,
+                "ThreadsPerCore": 1
+            }
+        }
+    ],
+    "OwnerId": "126211257110",
+    "ReservationId": "r-7845d2ce"
+}
+
+
+Step-14 : Do SSH from Local Machine i.e. Windows/MacOS with the help of Putty, Cmder, or Gitbash :
+
+$ pwd
+/Users/keshavkummari
+
+$ cd Downloads/
+
+$ ls -lrt kkummariaws.pem 
+-r--------@ 1 keshavkummari  staff  1696 Sep  9 20:37 kkummariaws.pem
+ 
+$ ssh -i "kkummariaws.pem" ec2-user@54.165.93.171
