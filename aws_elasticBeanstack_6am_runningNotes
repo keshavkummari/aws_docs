@@ -1,0 +1,20 @@
+
+
+Step-1 : We should have Java or python code with us
+
+	Java code i.e. devops-1.0.0.war
+Code Bucket Path:
+https://s3.amazonaws.com/kkummari/devops-1.0.0-SNAPSHOT.war
+
+Step-2 : AWS >> Compute >> ElasticBeanStack
+
+Step-3 : Uploaded a Java Code i.e. devops-1.0.0.war
+
+Step-4 : Resources were created by EBStack:
+	
+	1. EC2		 : i-0c7a60ca5fc49ef2a
+	2. S3 Bucket : elasticbeanstalk-ap-south-1-898594748181
+	3. EIP       : 13.233.49.243
+	4. SG		 : awseb-e-pc6ap3gmpa-stack-AWSEBSecurityGroup-LFH2OFGCI7DN
+	5. DNS		 : KeshavkummariJava-env.f8ceg9zspp.ap-south-1.elasticbeanstalk.com 
+
